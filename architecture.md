@@ -1,31 +1,33 @@
-          ┌────────────────────────────┐
-          │  User Model (PyTorch/ONNX) │
-          └────────────┬───────────────┘
-                       │
-             [Graph Extractor]
-                       ↓
-           ┌──────────────────────┐
-           │    Computation Graph │
-           └──────────────────────┘
-                       ↓
-         [Operator Profiler / Lookup Table]
-                       ↓
-               [Partitioning Engine]
-         (assign ops to CPU / GPU / NPU)
-                       ↓
-        ┌────────────┬─────────────┐
-        │ Subgraph A │  Subgraph B │
-        │   on GPU   │   on CPU    │
-        └─────┬──────┴─────┬───────┘
-              ↓            ↓
-   [Executor Engine]   [Executor Engine]
-   (e.g. ONNX EP)        (e.g. CPU)
-              ↓            ↓
-        ┌──────────────────────────┐
-        │   Runtime Orchestrator   │
-        │ (executes + manages data │
-        │  transfer & scheduling)  │
-        └──────────────────────────┘
-                       ↓
-               Final Model Output
-
+### POC Architecture
+```
+┌─────────────────────────────────────────┐
+│  Client Request                         │
+│  [user_id, item_ids, features]          │
+└──────────────┬──────────────────────────┘
+               │
+               ▼
+┌──────────────────────────────────────────┐
+│  Router (Python/FastAPI)                 │
+│  - Parse request                         │
+│  - Decide: CPU or GPU path?              │
+│  - If cold start: trigger CPU prefill    │
+└──────────────┬───────────────────────────┘
+               │
+        ┌──────┴──────┐
+        ▼             ▼
+┌─────────────┐ ┌─────────────┐
+│ CPU Worker  │ │ GPU Worker  │
+│             │ │             │
+│ Embedding   │ │ Full model  │
+│ lookup only │ │ (baseline)  │
+└──────┬──────┘ └─────────────┘
+       │
+       │ Send dense vectors
+       ▼
+┌─────────────┐
+│ GPU Worker  │
+│ MLP only    │
+└──────┬──────┘
+       │
+       ▼
+  Response

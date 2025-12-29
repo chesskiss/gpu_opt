@@ -24,15 +24,23 @@ class RoutedModelWrapper(nn.Module):
 # ------------------------
 # Operator Router (POC)
 # ------------------------
+def _preferred_accelerator() -> str:
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
+
+
 def route_op(op_name: str, input_shape):
     ops = int(torch.prod(torch.tensor(input_shape))) if input_shape else 1
-    batch = input_shape[0] if input_shape else 1
+    accel = _preferred_accelerator()
 
-    if op_name == "linear" and ops > 1_000_000:
-        return "mps"  # GPU for heavy ops
-    elif op_name == "relu" :
+    if op_name == "linear" and ops > 1_000_000 and accel != "cpu":
+        return accel  # accelerator for heavy ops
+    elif op_name == "relu":
         return "cpu"  # CPU for light ops
-    return "mps"
+    return accel
 
 
 

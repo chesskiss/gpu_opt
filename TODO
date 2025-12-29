@@ -1,3 +1,91 @@
-1. Read the PDF - understand commercial potentials and lanes - ask gpt to summarise into bullets just the tech and add here.
+# TODO: CPU-GPU Heterogeneous Inference POC
 
-2. Overlapping CPU and GPU computation for memory-bound inference.
+## Phase 1: Core Functionality (Week 1)
+
+### High Priority
+- [ ] **example.py**: Implement simplified DLRM model
+  - [ ] Create embedding tables (100M params, CPU-resident)
+  - [ ] Create MLP network (GPU-resident)
+  - [ ] Generate synthetic request data
+  - [ ] Add simple forward pass function
+  
+- [ ] **benchmark.py**: Measure baseline performance
+  - [ ] CPU-only path timing
+  - [ ] GPU-only path timing  
+  - [ ] CPU→GPU hybrid path timing
+  - [ ] Plot latency vs batch size
+  - [ ] Calculate memory usage for each path
+
+- [ ] **poc.py**: Routing logic improvements
+  - [ ] Add batch size threshold detection
+  - [ ] Implement simple queue depth monitoring
+  - [ ] Add timing instrumentation
+  - [ ] Create /health endpoint
+
+### Medium Priority
+- [ ] **Transfer optimization**
+  - [ ] Benchmark torch.cuda() vs pinned memory
+  - [ ] Test different tensor formats (float32 vs float16)
+  - [ ] Add transfer batching
+
+- [ ] **Cold start simulation**
+  - [ ] Mock model loading delay (sleep)
+  - [ ] Implement CPU serving during load
+  - [ ] Measure downtime reduction
+
+## Phase 2: Production Features (Week 2-3)
+
+- [ ] **Multi-request handling**
+  - [ ] Add async request queuing
+  - [ ] Implement batch accumulation
+  - [ ] Dynamic batch sizing
+
+- [ ] **Monitoring**
+  - [ ] Add Prometheus metrics
+  - [ ] Log request latencies
+  - [ ] Track GPU/CPU utilization
+
+- [ ] **Real DLRM model**
+  - [ ] Download pretrained weights
+  - [ ] Test on Criteo dataset
+  - [ ] Validate accuracy parity
+
+## Phase 3: Advanced (Month 2)
+
+- [ ] **ML-based routing**
+  - [ ] Collect routing decision data
+  - [ ] Train simple regression model
+  - [ ] A/B test learned vs rule-based
+
+- [ ] **RDMA support**
+  - [ ] Test with InfiniBand
+  - [ ] Benchmark RDMA vs TCP
+
+- [ ] **Multi-GPU support**
+  - [ ] Load balance across GPUs
+  - [ ] Handle GPU failures
+
+## Infrastructure
+
+- [ ] **CI/CD**
+  - [ ] Add pytest unit tests
+  - [ ] Docker container build
+  - [ ] GitHub Actions workflow
+
+- [ ] **Documentation**
+  - [ ] API documentation
+  - [ ] Architecture diagrams
+  - [ ] Performance tuning guide
+
+## Research Questions
+
+- [ ] What's optimal embedding size threshold for CPU offload?
+- [ ] Does CPU prefill work for LLMs (not just RecSys)?
+- [ ] Can we predict optimal routing using request features?
+- [ ] What's the ROI at different scales (10 vs 100 vs 1000 GPUs)?
+
+## Known Issues
+
+- [ ] Transfer overhead dominates for small batches (<10 items)
+- [ ] CPU lookup slower than GPU for small embedding tables
+- [ ] No fault tolerance if CPU node crashes

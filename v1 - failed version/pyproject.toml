@@ -1,0 +1,10 @@
+[project]
+name = "ai-router"
+version = "0.1.0"
+description = "POC for operator-level runtime router using PyTorch FX"
+requires-python = ">=3.9"
+
+
+[tool.uv]
+venv = ".vgpu"
+

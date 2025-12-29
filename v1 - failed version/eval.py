@@ -8,7 +8,9 @@ from model import make_dummy_input, run_inference
 
 
 def _sync_device(device: torch.device) -> None:
-    if device.type == "mps":
+    if device.type == "cuda":
+        torch.cuda.synchronize()
+    elif device.type == "mps":
         torch.mps.synchronize()
 
 

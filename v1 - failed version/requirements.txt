@@ -29,8 +29,6 @@ configobj==5.0.9
 configparser==7.1.0
 contourpy==1.2.0
 cryptography==43.0.0
--e file:///Users/arnoldcheskis/Documents/Education/Comuputer%20science/Reinforcement%20Learning/Assignments/Coding/Release
--e file:///Users/arnoldcheskis/Documents/Education/Comuputer%20science/Reinforcement%20Learning/Assignments/Coding/PA2
 cycler==0.12.1
 decorator==5.1.1
 distlib==0.3.8
