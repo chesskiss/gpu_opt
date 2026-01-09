@@ -1,5 +1,11 @@
 # TODO: CPU-GPU Heterogeneous Inference POC
 
+# 0:
+Multi-batch pipelining (depth > 2)
+CPU thread pool for embedding lookups
+Adaptive pipeline depth based on workload
+Production-ready error handling and retry logic
+
 ## Phase 1: Core Functionality (Week 1)
 
 ### High Priority
